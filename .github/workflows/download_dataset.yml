@@ -23,22 +23,25 @@ jobs:
         pip install -r requirements.txt
     
     - name: Check if dataset exists
+      id: check-dataset
       run: |
         if [ -f "data/mnist_raw.npz" ]; then
-          echo "Dataset already exists. Skipping download."
-          exit 0
+          echo "exists=true" >> $GITHUB_ENV
+        else
+          echo "exists=false" >> $GITHUB_ENV
         fi
     
     - name: Download MNIST dataset
+      if: env.exists == 'false'
       run: python src/download_dataset.py
     
     - name: Commit dataset to repository
+      if: env.exists == 'false'
       env:
         GH_PAT: ${{ secrets.GH_PAT }}
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git remote set-url origin https://x-access-token:${GH_PAT}@github.com/paezdev/paez_jean_MNIST.git
         git add data/mnist_raw.npz
         git commit -m "Add MNIST dataset"
         git push
