@@ -1,0 +1,32 @@
+name: Download MNIST Dataset
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  download-dataset:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Download MNIST dataset
+      run: python src/download_dataset.py
+    
+    - name: Upload dataset artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: mnist-dataset
+        path: data/mnist_raw.npz
