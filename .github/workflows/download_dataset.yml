@@ -22,11 +22,20 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
+    - name: Check if dataset exists
+      run: |
+        if [ -f "data/mnist_raw.npz" ]; then
+          echo "Dataset already exists. Skipping download."
+          exit 0
+        fi
+    
     - name: Download MNIST dataset
       run: python src/download_dataset.py
     
-    - name: Upload dataset artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: mnist-dataset
-        path: data/mnist_raw.npz
+    - name: Commit dataset to repository
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add data/mnist_raw.npz
+        git commit -m "Add MNIST dataset"
+        git push
