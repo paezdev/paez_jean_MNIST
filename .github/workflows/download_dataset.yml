@@ -33,9 +33,12 @@ jobs:
       run: python src/download_dataset.py
     
     - name: Commit dataset to repository
+      env:
+        GH_PAT: ${{ secrets.GH_PAT }}
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git remote set-url origin https://x-access-token:${GH_PAT}@github.com/paezdev/paez_jean_MNIST.git
         git add data/mnist_raw.npz
         git commit -m "Add MNIST dataset"
         git push
