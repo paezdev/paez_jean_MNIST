@@ -3,3 +3,4 @@ scikit-learn
 matplotlib
 jupyter
 pandas
+tensorflow
